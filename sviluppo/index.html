@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  	<meta name="robots" content="" >
+	<meta name="generator" content="" >
+	<meta name="keywords" content="minimo js ahah" >
+	<meta name="description" content="" >
+	<meta name="MSSmartTagsPreventParsing" content="true" >
+	<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+	<meta http-equiv="distribution" content="global" >
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" >
+	<meta http-equiv="Resource-Type" content="document" >
+
+  <title>Blockly sgl.js: html5 blockly</title>
+  <link rel="stylesheet" type="text/css" href="theme.css" media="all" />
+  <script src="blockly_compressed.js"></script>
+  <script src="blocks_compressed.js"></script>
+  <script src="javascript_compressed.js"></script>
+  <script src="msg/js/en.js"></script>
+
+  <script>
+	function parse_get(){
+  var args = new Array();
+  var query = window.location.search.substring(1);
+  if (query){
+    var strList = query.split('&');
+    for(str in strList){
+      var parts = strList[str].split('=');
+      args[unescape(parts[0])] = unescape(parts[1]);
+    }
+  }
+  return args;
+}
+var $_GET=parse_get();
+
+	  
+	function save(filename,source,code){
+		var Service="http:save.php";
+		var xhr = new XMLHttpRequest();
+		xhr.open('POST', Service, false);
+		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+		xhr.onload = function () {
+				// do something to response
+				console.log(this.responseText);
+		};
+		xhr.send('filename='+filename+'&source='+source+'&code='+code);
+	}
+
+	function loadCode(){
+		var filepath="saves/"+filename.value+".xml";
+		var xmlhttp=new XMLHttpRequest();
+		xmlhttp.onreadystatechange=function(){
+			if (xmlhttp.readyState==4 && xmlhttp.status==200){
+				var xml_text=xmlhttp.responseText;
+				var xml = Blockly.Xml.textToDom(xml_text);
+				Blockly.mainWorkspace.clear();
+				Blockly.Xml.domToWorkspace(Blockly.mainWorkspace, xml);
+			}
+		}	    
+		xmlhttp.open("GET",filepath,true);
+		xmlhttp.send();
+	}
+
+    function showCode() {
+      // Generate JavaScript code and display it.
+      Blockly.JavaScript.INFINITE_LOOP_TRAP = null;
+      var code = Blockly.JavaScript.workspaceToCode();
+      alert(code);
+    }
+
+    function runCode() {
+      var code = Blockly.JavaScript.workspaceToCode();
+      var xml = Blockly.Xml.workspaceToDom(Blockly.mainWorkspace);
+      var xml_text = Blockly.Xml.domToText(xml);
+		save(filename.value,xml_text,code);
+		window.open("test.html");
+    }
+	
+  </script>
+</head>
+<body>
+
+  <span name='toolbar' id='toolbar'>
+	 <span class='label'>project name</span>
+	<input type="text" name="filename" id='filename' placeholder="filename" value='new'>
+	<button class='blue button' onclick="loadCode();">load</button>  
+    <button class='red button'onclick="runCode();">save run </button>
+    <button class='grey button'onclick="showCode();">code</button>
+  </span>
+
+   <div name="blocklyDiv" id="blocklyDiv" style="width: 100%;"></div>
+   <script>blocklyDiv.style.height=''+eval(window.innerHeight - 64)+'px';</script> 
+  
+  <xml id="toolbox" style="display: none">
+    <category id="Logic" name="Logic" >
+      <block type="controls_if"></block>
+      <block type="logic_compare"></block>
+      <block type="logic_operation"></block>
+      <block type="logic_negate"></block>
+      <block type="logic_boolean"></block>
+      <block type="logic_null"></block>
+      <block type="logic_ternary"></block>
+    </category>
+    <category id="Loops" name="Loops">
+      <block type="controls_repeat_ext">
+        <value name="TIMES">
+          <block type="math_number">
+            <field name="NUM">10</field>
+          </block>
+        </value>
+      </block>
+      <block type="controls_whileUntil"></block>
+      <block type="controls_for">
+        <value name="FROM">
+          <block type="math_number">
+            <field name="NUM">1</field>
+          </block>
+        </value>
+        <value name="TO">
+          <block type="math_number">
+            <field name="NUM">10</field>
+          </block>
+        </value>
+        <value name="BY">
+          <block type="math_number">
+            <field name="NUM">1</field>
+          </block>
+        </value>
+      </block>
+      <block type="controls_forEach"></block>
+      <block type="controls_flow_statements"></block>
+    </category>
+    <category id="Math" name="Math">
+      <block type="math_number"></block>
+      <block type="math_arithmetic"></block>
+      <block type="math_single"></block>
+      <block type="math_trig"></block>
+      <block type="math_constant"></block>
+      <block type="math_number_property"></block>
+      <block type="math_change">
+        <value name="DELTA">
+          <block type="math_number">
+            <field name="NUM">1</field>
+          </block>
+        </value>
+      </block>
+      <block type="math_round"></block>
+      <block type="math_on_list"></block>
+      <block type="math_modulo"></block>
+      <block type="math_constrain">
+        <value name="LOW">
+          <block type="math_number">
+            <field name="NUM">1</field>
+          </block>
+        </value>
+        <value name="HIGH">
+          <block type="math_number">
+            <field name="NUM">100</field>
+          </block>
+        </value>
+      </block>
+      <block type="math_random_int">
+        <value name="FROM">
+          <block type="math_number">
+            <field name="NUM">1</field>
+          </block>
+        </value>
+        <value name="TO">
+          <block type="math_number">
+            <field name="NUM">100</field>
+          </block>
+        </value>
+      </block>
+      <block type="math_random_float"></block>
+    </category>
+    <category id="Text" name="Text">
+      <block type="text"></block>
+      <block type="text_join"></block>
+      <block type="text_append">
+        <value name="TEXT">
+          <block type="text"></block>
+        </value>
+      </block>
+      <block type="text_length"></block>
+      <block type="text_isEmpty"></block>
+      <block type="text_indexOf">
+        <value name="VALUE">
+          <block type="variables_get">
+            <field name="VAR" class="textVar">...</field>
+          </block>
+        </value>
+      </block>
+      <block type="text_charAt">
+        <value name="VALUE">
+          <block type="variables_get">
+            <field name="VAR" class="textVar">...</field>
+          </block>
+        </value>
+      </block>
+      <block type="text_getSubstring">
+        <value name="STRING">
+          <block type="variables_get">
+            <field name="VAR" class="textVar">...</field>
+          </block>
+        </value>
+      </block>
+      <block type="text_changeCase"></block>
+      <block type="text_trim"></block>
+      <block type="text_print"></block>
+      <block type="text_prompt_ext">
+        <value name="TEXT">
+          <block type="text"></block>
+        </value>
+      </block>
+    </category>
+    <category id="Lists" name="Lists">
+      <block type="lists_create_empty"></block>
+      <block type="lists_create_with"></block>
+      <block type="lists_repeat">
+        <value name="NUM">
+          <block type="math_number">
+            <field name="NUM">5</field>
+          </block>
+        </value>
+      </block>
+      <block type="lists_length"></block>
+      <block type="lists_isEmpty"></block>
+      <block type="lists_indexOf">
+        <value name="VALUE">
+          <block type="variables_get">
+            <field name="VAR" class="listVar">...</field>
+          </block>
+        </value>
+      </block>
+      <block type="lists_getIndex">
+        <value name="VALUE">
+          <block type="variables_get">
+            <field name="VAR" class="listVar">...</field>
+          </block>
+        </value>
+      </block>
+      <block type="lists_setIndex">
+        <value name="LIST">
+          <block type="variables_get">
+            <field name="VAR" class="listVar">...</field>
+          </block>
+        </value>
+      </block>
+      <block type="lists_getSublist">
+        <value name="LIST">
+          <block type="variables_get">
+            <field name="VAR" class="listVar">...</field>
+          </block>
+        </value>
+      </block>
+      <block type="lists_split">
+        <value name="DELIM">
+          <block type="text">
+            <field name="TEXT">,</field>
+          </block>
+        </value>
+      </block>
+    </category>
+    <category id="Colour" name="Colour">
+      <block type="colour_picker"></block>
+      <block type="colour_random"></block>
+      <block type="colour_rgb">
+        <value name="RED">
+          <block type="math_number">
+            <field name="NUM">100</field>
+          </block>
+        </value>
+        <value name="GREEN">
+          <block type="math_number">
+            <field name="NUM">50</field>
+          </block>
+        </value>
+        <value name="BLUE">
+          <block type="math_number">
+            <field name="NUM">0</field>
+          </block>
+        </value>
+      </block>
+      <block type="colour_blend">
+        <value name="COLOUR1">
+          <block type="colour_picker">
+            <field name="COLOUR">#ff0000</field>
+          </block>
+        </value>
+        <value name="COLOUR2">
+          <block type="colour_picker">
+            <field name="COLOUR">#3333ff</field>
+          </block>
+        </value>
+        <value name="RATIO">
+          <block type="math_number">
+            <field name="NUM">0.5</field>
+          </block>
+        </value>
+      </block>
+    </category>
+    <sep></sep>
+    <category id="catVariables" name="Variables" custom="VARIABLE"></category>
+    <category id="catFunctions" name="Functions" custom="PROCEDURE"></category>
+    <sep></sep>
+		<category name="default">
+			<block type="sgljs_display"></block>		
+		</category>
+		<category name="screen">
+			<block type="sgljs_setdisplay"></block>
+			<block type="sgljs_setfps"></block>
+			<block type="sgljs_createsurface"></block>
+			<block type="sgljs_loadsurface"></block>
+			<block type="sgljs_blt"></block>
+			<block type="sgljs_paste"></block>
+			<block type="sgljs_hit"></block>
+			<block type="sgljs_hitpp"></block>
+		</category>
+		<category name="graphics">
+			<block type="sgljs_cls"></block>
+			<block type="sgljs_putpixel"></block>
+			<block type="sgljs_getpixel"></block>
+			<block type="sgljs_line"></block>
+			<block type="sgljs_box"></block>
+			<block type="sgljs_bar"></block>
+			<block type="sgljs_circle"></block>
+			<block type="sgljs_fillcircle"></block>
+		</category>
+		<category name="text">
+			<block type="sgljs_setfont"></block>			
+			<block type="sgljs_text"></block>
+		</category>
+		<category name="mouse">
+			<block type="sgljs_mousex"></block>
+			<block type="sgljs_mousey"></block>
+			<block type="sgljs_mouseb"></block>
+		</category>
+		<category name="touch">
+			<block type="sgljs_touchx"></block>
+			<block type="sgljs_touchy"></block>
+			<block type="sgljs_touchb"></block>
+		</category>
+		<category name="keyboard">
+			<block type="sgljs_key"></block>
+		</category>
+		<category name="sound">
+			<block type="sgljs_loadsound"></block>
+			<block type="sgljs_playsound"></block>
+		</category>
+  </xml>
+
+
+  <script>
+    Blockly.inject(document.getElementById('blocklyDiv'),{toolbox: document.getElementById('toolbox')});
+    if ($_GET['filename'])filename.value=$_GET['filename'];
+	loadCode();
+  </script>
+
+</body>
+</html>
